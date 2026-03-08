@@ -78,7 +78,7 @@ function requireSecret(req, res, next) {
   next();
 }
 
-app.all("/*splat", requireSecret, async (req, res) => {
+app.all("*", requireSecret, async (req, res) => {
   const incomingPath = req.path;
   const incomingMethod = req.method.toUpperCase();
 
