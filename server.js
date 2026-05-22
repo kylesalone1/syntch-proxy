@@ -17,6 +17,7 @@ const ALLOWED_ROUTES = [
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/tokens\/cards$/, upstreamPath: (m) => `/merchants/${m[1]}/tokens/cards`, name: "tokenize" },
   { method: "POST", pattern: /^\/v2\/transactions\/bcp$/, upstreamPath: () => "/v2/transactions/bcp", name: "charge" },
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
+  { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers$/, upstreamPath: (m) => `/merchants/${m[1]}/customers`, name: "create_merchant_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts`, name: "create_contract" },
   { method: "DELETE", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts\/([^/]+)$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts/${m[3]}`, name: "cancel_contract" },
 ];
