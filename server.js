@@ -14,6 +14,7 @@ if (!PROXY_SECRET) {
 
 const ALLOWED_ROUTES = [
   { method: "POST", pattern: /^\/Authenticate$/, upstreamPath: () => "/Authenticate", name: "authenticate" },
+  { method: "POST", pattern: /^\/api\/auth$/, upstreamPath: () => "/Authenticate", name: "authenticate_api_auth" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/tokens\/cards$/, upstreamPath: (m) => `/merchants/${m[1]}/tokens/cards`, name: "tokenize" },
   { method: "POST", pattern: /^\/v2\/transactions\/bcp$/, upstreamPath: () => "/v2/transactions/bcp", name: "charge" },
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
