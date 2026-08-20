@@ -17,6 +17,7 @@ const ALLOWED_ROUTES = [
   { method: "POST", pattern: /^\/api\/auth$/, upstreamPath: () => "/Authenticate", name: "authenticate_api_auth" },
   { method: "POST", pattern: /^\/auth$/, upstreamPath: () => "/Authenticate", name: "authenticate_short" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/tokens\/cards$/, upstreamPath: (m) => `/merchants/${m[1]}/tokens/cards`, name: "tokenize" },
+  { method: "POST", pattern: /^\/merchants\/([^/]+)\/tokens$/, upstreamPath: (m) => `/merchants/${m[1]}/tokens`, name: "tokenize_from_pnref" },
   { method: "POST", pattern: /^\/v2\/transactions\/bcp$/, upstreamPath: () => "/v2/transactions/bcp", name: "charge" },
   { method: "GET", pattern: /^\/reports\/transactions\/([0-9]+)$/, upstreamPath: (m) => `/reports/transactions/${m[1]}`, name: "transaction_report" },
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
