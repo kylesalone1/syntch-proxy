@@ -24,6 +24,7 @@ const ALLOWED_ROUTES = [
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers$/, upstreamPath: (m) => `/merchants/${m[1]}/customers`, name: "create_merchant_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts`, name: "create_contract" },
+  { method: "PATCH", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts\/([^/]+)$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts/${m[3]}`, name: "update_contract" },
   { method: "DELETE", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts\/([^/]+)$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts/${m[3]}`, name: "cancel_contract" },
 ];
 
@@ -88,7 +89,7 @@ app.all("*", requireSecret, async (req, res) => {
   const incomingPath = req.path;
   const incomingMethod = req.method.toUpperCase();
 
-  if (incomingMethod !== "POST" && incomingMethod !== "GET" && incomingMethod !== "DELETE") {
+  if (incomingMethod !== "POST" && incomingMethod !== "GET" && incomingMethod !== "PATCH" && incomingMethod !== "DELETE") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
@@ -117,7 +118,7 @@ app.all("*", requireSecret, async (req, res) => {
     upstreamRes = await fetch(upstreamUrl, {
       method: incomingMethod,
       headers: forwardHeaders,
-      body: incomingMethod === "POST" ? JSON.stringify(req.body) : undefined,
+      body: (incomingMethod === "POST" || incomingMethod === "PATCH") ? JSON.stringify(req.body) : undefined,
     });
   } catch (err) {
     log("error", `upstream_error id=${requestId} err=${err.message}`);
