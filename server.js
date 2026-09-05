@@ -20,6 +20,8 @@ const ALLOWED_ROUTES = [
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/tokens$/, upstreamPath: (m) => `/merchants/${m[1]}/tokens`, name: "tokenize_from_pnref" },
   { method: "POST", pattern: /^\/v2\/transactions\/bcp$/, upstreamPath: () => "/v2/transactions/bcp", name: "charge" },
   { method: "POST", pattern: /^\/transactions$/, upstreamPath: () => "/transactions", name: "transaction_token_sale" },
+  { method: "GET", pattern: /^\/reports\/settlements\/closed$/, upstreamPath: () => "/reports/settlements/closed", name: "settlement_batches_report" },
+  { method: "GET", pattern: /^\/reports\/settlements\/([^/]+)$/, upstreamPath: (m) => `/reports/settlements/${m[1]}`, name: "settlement_batch_detail_report" },
   { method: "GET", pattern: /^\/reports\/transactions\/([0-9]+)$/, upstreamPath: (m) => `/reports/transactions/${m[1]}`, name: "transaction_report" },
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers$/, upstreamPath: (m) => `/merchants/${m[1]}/customers`, name: "create_merchant_customer" },
@@ -105,7 +107,12 @@ app.all("*", requireSecret, async (req, res) => {
     return res.status(403).json({ error: "Route not permitted" });
   }
 
-  const upstreamUrl = `${SYNTCH_TARGET}${upstreamPath}`;
+  // Preserve the caller's query string exactly. Reporting endpoints depend on
+  // BeginDate/EndDate, pagination and sort query parameters; using req.path
+  // alone would silently strip them before forwarding to Syntch.
+  const queryIndex = req.originalUrl.indexOf("?");
+  const queryString = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : "";
+  const upstreamUrl = `${SYNTCH_TARGET}${upstreamPath}${queryString}`;
   const requestId = Math.random().toString(36).slice(2, 10);
   log("info", `req id=${requestId} route=${routeName} -> ${upstreamUrl}`);
 
