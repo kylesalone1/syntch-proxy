@@ -23,6 +23,10 @@ const ALLOWED_ROUTES = [
   { method: "GET", pattern: /^\/reports\/settlements\/$/, upstreamPath: () => "/reports/settlements/", name: "merchant_settlement_batches_report" },
   { method: "GET", pattern: /^\/reports\/settlements\/closed$/, upstreamPath: () => "/reports/settlements/closed", name: "settlement_batches_report" },
   { method: "GET", pattern: /^\/reports\/settlements\/([^/]+)$/, upstreamPath: (m) => `/reports/settlements/${m[1]}`, name: "settlement_batch_detail_report" },
+  // Read-only transaction-list report. The Bank Deposit Report uses this with
+  // SettlementFlag + SettleBeginDate/SettleEndDate to obtain all transaction
+  // rows that comprise the merchant settlement batches in a date range.
+  { method: "GET", pattern: /^\/reports\/transactions\/$/, upstreamPath: () => "/reports/transactions/", name: "transaction_list_report" },
   { method: "GET", pattern: /^\/reports\/transactions\/([0-9]+)$/, upstreamPath: (m) => `/reports/transactions/${m[1]}`, name: "transaction_report" },
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers$/, upstreamPath: (m) => `/merchants/${m[1]}/customers`, name: "create_merchant_customer" },
