@@ -27,7 +27,9 @@ const ALLOWED_ROUTES = [
   // SettlementFlag + SettleBeginDate/SettleEndDate to obtain all transaction
   // rows that comprise the merchant settlement batches in a date range.
   { method: "GET", pattern: /^\/reports\/transactions\/$/, upstreamPath: () => "/reports/transactions/", name: "transaction_list_report" },
-  { method: "GET", pattern: /^\/reports\/transactions\/([0-9]+)$/, upstreamPath: (m) => `/reports/transactions/${m[1]}`, name: "transaction_report" },
+  // Syntch supports direct lookup of one to ten PnRefs in the path. Keep the
+  // proxy allowlist numeric-only and capped at ten comma-separated IDs.
+  { method: "GET", pattern: /^\/reports\/transactions\/([0-9]+(?:,[0-9]+){0,9})$/, upstreamPath: (m) => `/reports/transactions/${m[1]}`, name: "transaction_report" },
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers$/, upstreamPath: (m) => `/merchants/${m[1]}/customers`, name: "create_merchant_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts`, name: "create_contract" },
