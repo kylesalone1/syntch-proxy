@@ -20,6 +20,7 @@ const ALLOWED_ROUTES = [
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/tokens$/, upstreamPath: (m) => `/merchants/${m[1]}/tokens`, name: "tokenize_from_pnref" },
   { method: "POST", pattern: /^\/v2\/transactions\/bcp$/, upstreamPath: () => "/v2/transactions/bcp", name: "charge" },
   { method: "POST", pattern: /^\/transactions$/, upstreamPath: () => "/transactions", name: "transaction_token_sale" },
+  { method: "GET", pattern: /^\/reports\/settlements\/$/, upstreamPath: () => "/reports/settlements/", name: "merchant_settlement_batches_report" },
   { method: "GET", pattern: /^\/reports\/settlements\/closed$/, upstreamPath: () => "/reports/settlements/closed", name: "settlement_batches_report" },
   { method: "GET", pattern: /^\/reports\/settlements\/([^/]+)$/, upstreamPath: (m) => `/reports/settlements/${m[1]}`, name: "settlement_batch_detail_report" },
   { method: "GET", pattern: /^\/reports\/transactions\/([0-9]+)$/, upstreamPath: (m) => `/reports/transactions/${m[1]}`, name: "transaction_report" },
