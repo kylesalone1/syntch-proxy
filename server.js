@@ -32,6 +32,8 @@ const ALLOWED_ROUTES = [
   { method: "GET", pattern: /^\/reports\/transactions\/([0-9]+(?:,[0-9]+){0,9})$/, upstreamPath: (m) => `/reports/transactions/${m[1]}`, name: "transaction_report" },
   { method: "POST", pattern: /^\/customers$/, upstreamPath: () => "/customers", name: "create_customer" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers$/, upstreamPath: (m) => `/merchants/${m[1]}/customers`, name: "create_merchant_customer" },
+  // Read-only contract listing used to retrieve Syntch's authoritative NextBillDate.
+  { method: "GET", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts`, name: "list_contracts" },
   { method: "POST", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts`, name: "create_contract" },
   { method: "PATCH", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts\/([^/]+)$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts/${m[3]}`, name: "update_contract" },
   { method: "DELETE", pattern: /^\/merchants\/([^/]+)\/customers\/([^/]+)\/contracts\/([^/]+)$/, upstreamPath: (m) => `/merchants/${m[1]}/customers/${m[2]}/contracts/${m[3]}`, name: "cancel_contract" },
