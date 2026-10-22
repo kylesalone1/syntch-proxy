@@ -1,7 +1,9 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
+import { createHash, timingSafeEqual } from "node:crypto";
 
 const PROXY_SECRET = process.env.PROXY_SECRET;
+const PROXY_SECRET_NEXT = process.env.PROXY_SECRET_NEXT;
 const SYNTCH_TARGET = (process.env.SYNTCH_TARGET || "http://syntch-sandbox.simpay.net/api").replace(/\/$/, "");
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const RATE_LIMIT_PER_MINUTE = parseInt(process.env.RATE_LIMIT_PER_MINUTE || "60", 10);
@@ -87,9 +89,18 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Temporary credential overlap permits coordinated rotation of the two Encore callers.
+// Remove PROXY_SECRET_NEXT and retire the old credential after the cutover.
+function matchesSecret(provided, expected) {
+  if (typeof provided !== "string" || !expected) return false;
+  const suppliedHash = createHash("sha256").update(provided).digest();
+  const expectedHash = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(suppliedHash, expectedHash);
+}
+
 function requireSecret(req, res, next) {
   const provided = req.headers["x-proxy-secret"];
-  if (!provided || provided !== PROXY_SECRET) {
+  if (!matchesSecret(provided, PROXY_SECRET) && !matchesSecret(provided, PROXY_SECRET_NEXT)) {
     log("error", `auth_failed ip=${req.ip} path=${req.path}`);
     return res.status(401).json({ error: "Unauthorized" });
   }
